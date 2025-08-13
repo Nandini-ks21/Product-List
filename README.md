@@ -1,5 +1,5 @@
 # Product-List
-**1. HTML Structure**
+1. HTML Structure
 <!DOCTYPE html>: Declares the document type.
 
 <head>: Contains metadata, page title, and CSS styles.
@@ -12,7 +12,7 @@ Filter inputs: a search bar, brand dropdown, and category dropdown
 
 A table that displays products fetched from an API
 
-**2. CSS Styling**
+2. CSS Styling
 Defines a clean, modern layout with:
 
 Centered title and filters
@@ -21,7 +21,7 @@ Styled table with hover effects
 
 Product images and formatted prices
 
-**3. JavaScript Functionality**
+3. JavaScript Functionality
 
 fetchProducts():
 Fetches product data from https://dummyjson.com/products?limit=100
