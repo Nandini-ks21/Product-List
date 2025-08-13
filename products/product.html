@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Product Details</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background: #f4f6f8;
+        margin: 20px;
+    }
+    .container {
+        max-width: 800px;
+        margin: auto;
+        background: white;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+    h2 {
+        color: #333;
+    }
+    img {
+        max-width: 100%;
+        border-radius: 8px;
+        margin-bottom: 15px;
+    }
+    .price {
+        color: green;
+        font-size: 1.5em;
+        font-weight: bold;
+    }
+    .back {
+        display: inline-block;
+        margin-bottom: 15px;
+        padding: 8px 12px;
+        background: #4facfe;
+        color: white;
+        text-decoration: none;
+        border-radius: 6px;
+    }
+</style>
+</head>
+<body>
+
+<div class="container">
+    <a href="click.html" class="back">← Back to Products</a>
+    <h2 id="title"></h2>
+    <img id="image" src="" alt="">
+    <p class="price" id="price"></p>
+    <p><strong>Brand:</strong> <span id="brand"></span></p>
+    <p><strong>Category:</strong> <span id="category"></span></p>
+    <p id="description"></p>
+</div>
+
+<script>
+    const params = new URLSearchParams(window.location.search);
+    const productId = params.get("id");
+
+    async function fetchProduct() {
+        try {
+            const res = await fetch(`https://dummyjson.com/products/${productId}`);
+            const product = await res.json();
+
+            document.getElementById("title").textContent = product.title;
+            document.getElementById("image").src = product.thumbnail;
+            document.getElementById("price").textContent = `$${product.price}`;
+            document.getElementById("brand").textContent = product.brand;
+            document.getElementById("category").textContent = product.category;
+            document.getElementById("description").textContent = product.description;
+        } catch (error) {
+            console.error("Error fetching product:", error);
+        }
+    }
+
+    fetchProduct();
+</script>
+
+</body>
+</html>

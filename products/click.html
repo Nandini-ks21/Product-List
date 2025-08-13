@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Product List</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background: #f0f2f5;
+        margin: 20px;
+    }
+    h2 {
+        text-align: center;
+        color: #333;
+    }
+    .filters {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        margin-bottom: 15px;
+        flex-wrap: wrap;
+    }
+    input, select {
+        padding: 8px 12px;
+        font-size: 14px;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+        outline: none;
+    }
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        background: white;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+    thead {
+        background: linear-gradient(45deg, #4facfe, #00f2fe);
+        color: white;
+    }
+    th, td {
+        padding: 12px;
+        text-align: left;
+    }
+    tbody tr:nth-child(even) {
+        background-color: #f9f9f9;
+    }
+    tbody tr:hover {
+        background-color: #e6f7ff;
+        cursor: pointer;
+        transition: 0.3s;
+    }
+    img {
+        width: 70px;
+        height: auto;
+        border-radius: 6px;
+    }
+    td.price {
+        font-weight: bold;
+        color: green;
+    }
+</style>
+</head>
+<body>
+
+<h2>🛍 Product Catalog</h2>
+
+<div class="filters">
+    <input type="text" id="searchBox" placeholder="Search products...">
+    <select id="brandFilter">
+        <option value="">All Brands</option>
+    </select>
+    <select id="categoryFilter">
+        <option value="">All Categories</option>
+    </select>
+</div>
+
+<table id="productsTable">
+    <thead>
+        <tr>
+            <th>Image</th>
+            <th>Title</th>
+            <th>Brand</th>
+            <th>Category</th>
+            <th>Price ($)</th>
+        </tr>
+    </thead>
+    <tbody></tbody>
+</table>
+
+<script>
+    const tableBody = document.querySelector("#productsTable tbody");
+    const searchBox = document.getElementById("searchBox");
+    const brandFilter = document.getElementById("brandFilter");
+    const categoryFilter = document.getElementById("categoryFilter");
+    let productsData = [];
+
+    // Fetch products
+    async function fetchProducts() {
+        try {
+            const res = await fetch("https://dummyjson.com/products?limit=100");
+            const data = await res.json();
+            productsData = data.products;
+            populateFilters(productsData);
+            displayProducts(productsData);
+        } catch (error) {
+            console.error("Error fetching products:", error);
+        }
+    }
+
+    // Populate filters
+    function populateFilters(products) {
+        const brands = [...new Set(products.map(p => p.brand))].sort();
+        const categories = [...new Set(products.map(p => p.category))].sort();
+
+        brands.forEach(brand => brandFilter.innerHTML += `<option value="${brand}">${brand}</option>`);
+        categories.forEach(cat => categoryFilter.innerHTML += `<option value="${cat}">${cat}</option>`);
+    }
+
+    // Display products in table
+    function displayProducts(products) {
+        tableBody.innerHTML = "";
+        products.forEach(product => {
+            const row = document.createElement("tr");
+            row.innerHTML = `
+                <td><img src="${product.thumbnail}" alt="${product.title}"></td>
+                <td>${product.title}</td>
+                <td>${product.brand}</td>
+                <td>${product.category}</td>
+                <td class="price">$${product.price}</td>
+            `;
+            row.addEventListener("click", () => {
+                window.location.href = `product.html?id=${product.id}`;
+            });
+            tableBody.appendChild(row);
+        });
+    }
+
+    // Filter function
+    function applyFilters() {
+        const searchTerm = searchBox.value.toLowerCase();
+        const brandValue = brandFilter.value;
+        const categoryValue = categoryFilter.value;
+
+        const filtered = productsData.filter(product => {
+            const matchesSearch = product.title.toLowerCase().includes(searchTerm);
+            const matchesBrand = brandValue === "" || product.brand === brandValue;
+            const matchesCategory = categoryValue === "" || product.category === categoryValue;
+            return matchesSearch && matchesBrand && matchesCategory;
+        });
+
+        displayProducts(filtered);
+    }
+
+    // Event listeners
+    searchBox.addEventListener("input", applyFilters);
+    brandFilter.addEventListener("change", applyFilters);
+    categoryFilter.addEventListener("change", applyFilters);
+
+    fetchProducts();
+</script>
+
+</body>
+</html>
